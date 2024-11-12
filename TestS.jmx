@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan">
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <com.googlecode.jmeter.plugins.webdriver.config.ChromeDriverConfig guiclass="com.googlecode.jmeter.plugins.webdriver.config.gui.ChromeDriverConfigGui" testclass="com.googlecode.jmeter.plugins.webdriver.config.ChromeDriverConfig" testname="jp@gc - Chrome Driver Config">
+          <boolProp name="WebDriverConfig.acceptinsecurecerts">false</boolProp>
+          <boolProp name="WebDriverConfig.reset_per_iteration">false</boolProp>
+          <stringProp name="WebDriverConfig.driver_path">/usr/local/bin/chromedriver</stringProp>
+          <boolProp name="WebDriverConfig.dev_mode">false</boolProp>
+          <boolProp name="WebDriverConfig.headless">false</boolProp>
+          <boolProp name="WebDriverConfig.maximize_browser">true</boolProp>
+          <stringProp name="ChromeDriverConfig.additional_args"></stringProp>
+          <stringProp name="ChromeDriverConfig.binary_path"></stringProp>
+          <stringProp name="WebDriverConfig.proxy_type">SYSTEM</stringProp>
+          <stringProp name="WebDriverConfig.proxy_pac_url"></stringProp>
+          <stringProp name="WebDriverConfig.http_host"></stringProp>
+          <intProp name="WebDriverConfig.http_port">8080</intProp>
+          <boolProp name="WebDriverConfig.use_http_for_all_protocols">true</boolProp>
+          <stringProp name="WebDriverConfig.https_host"></stringProp>
+          <intProp name="WebDriverConfig.https_port">8080</intProp>
+          <boolProp name="WebDriverConfig.use_ftp_proxy">true</boolProp>
+          <stringProp name="WebDriverConfig.ftp_host"></stringProp>
+          <intProp name="WebDriverConfig.ftp_port">8080</intProp>
+          <boolProp name="WebDriverConfig.use_socks_proxy">true</boolProp>
+          <stringProp name="WebDriverConfig.socks_host"></stringProp>
+          <intProp name="WebDriverConfig.socks_port">8080</intProp>
+          <stringProp name="WebDriverConfig.no_proxy">localhost</stringProp>
+          <stringProp name="WebDriverConfig.custom_capabilites"></stringProp>
+        </com.googlecode.jmeter.plugins.webdriver.config.ChromeDriverConfig>
+        <hashTree/>
+        <com.googlecode.jmeter.plugins.webdriver.sampler.WebDriverSampler guiclass="com.googlecode.jmeter.plugins.webdriver.sampler.gui.WebDriverSamplerGui" testclass="com.googlecode.jmeter.plugins.webdriver.sampler.WebDriverSampler" testname="jp@gc - WebDriver Sampler">
+          <stringProp name="WebDriverSampler.script">import org.openqa.selenium.By
+import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.support.ui.Select
+import org.openqa.selenium.support.ui.WebDriverWait
+import org.openqa.selenium.StaleElementReferenceException
+import java.time.Duration
+
+// Definir la lista de productos
+def lst_productos = [
+    &quot;102535&quot;, &quot;102536&quot;, &quot;102537&quot;, &quot;104870&quot;, &quot;104874&quot;, &quot;104875&quot;, 
+    &quot;105835&quot;, &quot;105836&quot;, &quot;102534&quot;, &quot;103001&quot;, &quot;104873&quot;, &quot;104876&quot;, 
+    &quot;104877&quot;, &quot;105833&quot;, &quot;102538&quot;, &quot;104871&quot;
+]
+
+// 1. Navegar a la URL
+WDS.browser.get(&apos;http://localhost:8080/appFacturacionWeb/faces/login.xhtml&apos;)
+
+// 2. Ingresar caracteres en los campos de texto
+def user_input = WDS.browser.findElement(By.id(&apos;j_idt5:j_idt11&apos;))
+user_input.clear()
+user_input.sendKeys(&apos;juan&apos;)
+
+def password_input = WDS.browser.findElement(By.id(&apos;j_idt5:j_idt13&apos;))
+password_input.clear()
+password_input.sendKeys(&apos;vendedor&apos;)
+
+def login_button = WDS.browser.findElement(By.id(&apos;j_idt5:j_idt14&apos;))
+login_button.click()
+
+def wait = new WebDriverWait(WDS.browser, Duration.ofSeconds(10))
+
+// Esperar a que el botón &quot;Generar Factura&quot; esté visible y hacer clic
+def btn_Generar_Factura = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(&apos;form2:j_idt7&apos;)))
+btn_Generar_Factura.click()
+
+// Reubicar el elemento span antes de interactuar con él
+def span_element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(&apos;span.ui-icon-triangle-1-s&apos;)))
+span_element.click()
+
+def random = new Random()
+def veces = random.nextInt(5) + 1  // Esto generará un número entre 1 y 5
+
+// Generar un número aleatorio entre 0 y 41
+def randomIndex = new Random().nextInt(42) // 42 porque el rango es [0, 41]
+
+// Esperar hasta que el elemento del dropdown sea visible y hacer clic
+def dropdown = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(&quot;form2:j_idt15_${randomIndex}&quot;)))
+dropdown.click()
+
+// Generar un número aleatorio para el número de productos a adicionar
+def vec = new Random().nextInt(5)
+
+for (int i = 0; i &lt; vec; i++) {
+    def attempts = 0
+    def maxRetries = 3
+    def select_producto = null
+
+    // Intentar obtener el elemento y manejar el error de &quot;stale element&quot;
+    while (attempts &lt; maxRetries) {
+        try {
+            // Reubicar el elemento en cada intento
+            select_producto = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(&quot;form3:j_idt24&quot;)))
+            break // Salir del bucle si se obtiene correctamente
+        } catch (StaleElementReferenceException e) {
+            attempts++
+            Thread.sleep(500) // Esperar antes de intentar de nuevo
+        }
+    }
+
+    if (select_producto != null) {
+        // Volver a buscar el elemento de selección antes de usarlo
+        def select_element = new Select(wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(&quot;form3:j_idt24&quot;))))
+        def random_producto = lst_productos[random.nextInt(lst_productos.size())]
+        select_element.selectByValue(random_producto)
+
+        // Localizar el campo de cantidad por nombre y enviar un número aleatorio entre 0 y 5
+        def cant = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name(&apos;form3:j_idt28&apos;)))
+        cant.clear() // Limpiar el campo antes de enviar nuevos datos
+        int cantidad = 1 + new Random().nextInt(5); // Genera un número entre 1 y 5
+        cant.sendKeys(String.valueOf(cantidad))
+
+        // Localizar y hacer clic en el botón adicionar
+        def btn_adicionar = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(&quot;form3:j_idt29&quot;)))
+        btn_adicionar.click()
+    }
+}
+
+Thread.sleep(1000) // Esperar antes de intentar de nuevo
+def btn_guardar = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name(&quot;form2:j_idt19&quot;)))
+btn_guardar.click()
+Thread.sleep(1000) // Esperar antes de intentar de nuevo</stringProp>
+          <stringProp name="WebDriverSampler.parameters"></stringProp>
+          <stringProp name="WebDriverSampler.language">groovy</stringProp>
+        </com.googlecode.jmeter.plugins.webdriver.sampler.WebDriverSampler>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
